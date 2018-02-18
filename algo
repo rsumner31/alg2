@@ -459,12 +459,20 @@ Enter the number of your desired provider
 user_management () {
 
   read -p "
-Enter the IP address of your server: (or use localhost for local installation)
+<<<<Enter the IP address of your server: (or use localhost for local installation)
 : " -r server_ip
 
   read -p "
 What user should we use to login on the server? (note: passwordless login required, or ignore if you're deploying to localhost)
-[root]: " -r server_user
+>>>>>>>+master
+===
+EnteEnter IP address of your server: (use localhost for local installation)
+: " -r server_ip
+
+  read -p "
+What user should we use to login on the server? (ignore if you're deploying to localhost)
+>>>>>>>-35faf4b
+t]: " -r server_user
   server_user=${server_user:-root}
 
 read -p "
@@ -472,7 +480,7 @@ Do you want each user to have their own account for SSH tunneling?
 [y/N]: " -r ssh_tunneling_enabled
 ssh_tunneling_enabled=${ssh_tunneling_enabled:-n}
 
-if [ "x${server_ip}" = "xlocalhost" ]; then
+<<<<if [ "x${server_ip}" = "xlocalhost" ]; then
 	myip=""
 else
 	myip=${server_ip}
@@ -495,9 +503,20 @@ $ADDITIONAL_PROMPT
 : " -rs easyrsa_CA_password
 
 ansible-playbook users.yml -e "server_ip=$server_ip server_user=$server_user ssh_tunneling_enabled=$ssh_tunneling_enabled IP_subject_alt_name=$IP_subject easyrsa_CA_password=$easyrsa_CA_password" -t update-users --skip-tags common
-}
+>>>>>>>+master
+===
+  re  read -p "
+Enter the public IP address of your server: (IMPORTANT! This IP is used to verify the certificate)
+: " -r IP_subject
 
-case "$1" in
+  read -p "
+Enter the password for the private CA key:
+[pasted values will not be displayed]
+: " -rs easyrsa_CA_password
+
+ansible-playbook users.yml -e "server_ip=$server_ip server_user=$server_user ssh_tunneling_enabled=$ssh_tunneling_enabled IP_subject=$IP_subject easyrsa_CA_password=$easyrsa_CA_password"
+>>>>>>>-35faf4b
+ase "$1" in
   update-users) user_management ;;
   *) algo_provisioning ;;
 esac
